@@ -96,41 +96,49 @@ export class Game {
 			switch (entity.facing) {
 				case 'north': {
 					const mustBeAt = entity.positionTo[1];
-					const nextAt = entity.position[1] - (entity.speed + delta);
+					let nextAt = entity.position[1] - (entity.speed + delta);
 
-					// set new position accounting extra
-					let extra = (mustBeAt - nextAt);
-					entity.setPosition(entity.position[0], nextAt + extra);
+					// if there will be extra account for it
+					if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
+
+					// set new position
+					entity.setPosition(entity.position[0], nextAt);
 					break;
 				}
 
 				case 'south': {
 					const mustBeAt = entity.positionTo[1];
-					const nextAt = entity.position[1] + (entity.speed + delta);
+					let nextAt = entity.position[1] + (entity.speed + delta);
 
-					// set new position accounting extra
-					let extra = (nextAt - mustBeAt);
-					entity.setPosition(entity.position[0], nextAt - extra)
+					// if there will be extra account for it
+					if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
+
+					// set new position
+					entity.setPosition(entity.position[0], nextAt)
 					break;
 				}
 
 				case 'west': {
 					const mustBeAt = entity.positionTo[0];
-					const nextAt = entity.position[0] - (entity.speed + delta);
+					let nextAt = entity.position[0] - (entity.speed + delta);
 
-					// set new position accounting extra
-					let extra = (mustBeAt - nextAt);
-					entity.setPosition(nextAt + extra, entity.position[1])
+					// if there will be extra account for it
+					if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
+
+					// set new position
+					entity.setPosition(nextAt, entity.position[1])
 					break;
 				}
 
 				case 'east': {
 					const mustBeAt = entity.positionTo[0];
-					const nextAt = entity.position[0] + (entity.speed + delta);
+					let nextAt = entity.position[0] + (entity.speed + delta);
 
-					// set new position accounting extra
-					let extra = nextAt - mustBeAt;
-					entity.setPosition(nextAt - extra, entity.position[1]);
+					// if there will be extra account for it
+					if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
+
+					// set new position
+					entity.setPosition(nextAt, entity.position[1]);
 					break;
 				}
 

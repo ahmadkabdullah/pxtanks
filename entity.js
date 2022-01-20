@@ -10,8 +10,8 @@ export class Entity {
 		this.texture = "";
 
 		// sprite properties
-		this.position = [0, 0];
-		this.size = [8, 8];
+		this.position = [Config.halfCellSize, Config.halfCellSize];
+		this.size = [Config.cellSize, Config.cellSize];
 		// direction
 		this.facing = "north";
 
@@ -25,9 +25,6 @@ export class Entity {
 		// set sprite on entity
 		this.sprite = spriteToAdd;
 		this.sprite.anchor.set(0.5);
-
-		// set new size according to sprite
-		this.size = [this.sprite.width, this.sprite.height];
 	}
 
 	// take damage and when 0, change to destroyed
