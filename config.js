@@ -1,7 +1,7 @@
 export const Config = {
 	screen: {
-		width: 800,
-		height: 800,
+		width: 700,
+		height: 700,
 	},
 
 	tanks: {
@@ -10,7 +10,7 @@ export const Config = {
 		baseMissileDamage: 2,
 		baseMissileSpeed: 2,
 		baseShootingRate: 1,
-		baseSpeed: 3,
+		baseSpeed: 4,
 	},
 
 	missiles: {
