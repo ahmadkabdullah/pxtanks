@@ -1,4 +1,4 @@
-import { config } from "./config.js";
+import { Config } from "./CONFIG.js";
 
 export class Entity {
 	constructor() {
@@ -21,13 +21,10 @@ export class Entity {
 		this.health = 1;
 	}
 
-	setSprite(runner, spriteToAdd) {
+	setSprite(spriteToAdd) {
 		// set sprite on entity
 		this.sprite = spriteToAdd;
 		this.sprite.anchor.set(0.5);
-
-		// render sprite
-		runner.stage.addChild(this.sprite)
 
 		// set new size according to sprite
 		this.size = [this.sprite.width, this.sprite.height];
@@ -95,26 +92,26 @@ class Movable extends Entity {
 		switch (absoluteDirection) {
 			case "east":
 				this.positionTo = [
-					this.position[0] + config.cellSize,
+					this.position[0] + Config.cellSize,
 					this.position[1],
 				];
 				break;
 			case "west":
 				this.positionTo = [
-					this.position[0] - config.cellSize,
+					this.position[0] - Config.cellSize,
 					this.position[1],
 				];
 				break;
 			case "north":
 				this.positionTo = [
 					this.position[0],
-					this.position[1] - config.cellSize,
+					this.position[1] - Config.cellSize,
 				];
 				break;
 			case "south":
 				this.positionTo = [
 					this.position[0],
-					this.position[1] + config.cellSize,
+					this.position[1] + Config.cellSize,
 				];
 				break;
 		}
@@ -124,7 +121,7 @@ class Movable extends Entity {
 export class Tank extends Movable {
 	constructor() {
 		super();
-		this.texture = 'assets/tanks.png';
+		this.texture = Config.tanks.texture;
 
 		// the statistics of the tank
 		this.stats = {
@@ -132,15 +129,16 @@ export class Tank extends Movable {
 			hits: 0,
 		};
 
-		// base tank health
-		this.health = config.tanks.baseHealth;
+		// base tank health and speed
+		this.health = Config.tanks.baseHealth;
+		this.speed = Config.tanks.baseSpeed;
 
 		// shooting of tanks
-		this.missileDamage = config.tanks.baseMissileDamage;
-		this.missileSpeed = config.tanks.baseMissileSpeed;
+		this.missileDamage = Config.tanks.baseMissileDamage;
+		this.missileSpeed = Config.tanks.baseMissileSpeed;
 
 		// the rate of fire using status
-		this.shootingRate = config.tanks.baseShootingRate;
+		this.shootingRate = Config.tanks.baseShootingRate;
 		this.isFiring = false;
 	}
 
@@ -161,7 +159,9 @@ export class Missile extends Movable {
 	constructor(tankThatFired, speed, damage) {
 		super();
 		this.texture = 'assets/missile.png';
+
 		this.sprite.zIndex = -3;
+		console.log(this.sprite.zIndex);
 
 		// missiles have a damage property
 		this.speed = speed;

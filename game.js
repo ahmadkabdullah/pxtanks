@@ -1,4 +1,4 @@
-import { config } from './config.js';
+import { Config } from './CONFIG.js';
 import { UnMovable, Tank, Missile } from './entity.js';
 
 // eslint-disable-next-line no-undef
@@ -8,7 +8,7 @@ export class Game {
 	constructor() {
 		// runner is a pixi app
 		this.runner = new Pixi.Application({
-			width: config.screen.width, height: config.screen.height,
+			width: Config.screen.width, height: Config.screen.height,
 			resolution: window.devicePixelRatio || 1,
 		});
 		// add game unto html file
@@ -16,7 +16,6 @@ export class Game {
 
 		// make zIndex usable
 		this.runner.stage.sortableChildren = true;
-		console.log(this.runner.stage);
 
 		// the field contains a list of items
 		// that are on the field (in the game)
@@ -33,7 +32,10 @@ export class Game {
 	// add an object to field
 	addEntity(entity, cell, row) {
 		// make sprite from texture and set on entity
-		entity.setSprite(this.runner, new Pixi.Sprite.from(entity.texture));
+		entity.setSprite(new Pixi.Sprite.from(entity.texture));
+
+		// render sprite
+		this.runner.stage.addChild(entity.sprite)
 
 		// generate random id
 		let id = this.getRandomNum();
@@ -61,8 +63,8 @@ export class Game {
 	// change cell position to pixel (3,4 = 125,175)
 	atCell(cell, row) {
 		return [
-			(cell * config.cellSize) - config.halfCellSize,
-			(row * config.cellSize) - config.halfCellSize,
+			(cell * Config.cellSize) - Config.halfCellSize,
+			(row * Config.cellSize) - Config.halfCellSize,
 		]
 	}
 
