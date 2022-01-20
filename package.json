@@ -1,0 +1,23 @@
+{
+  "name": "pxtanks",
+  "version": "0.1.0",
+  "description": "PXTanks Game",
+  "main": "main.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmadkabdullah/pxtanks.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Ahmad K. Abdullah",
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/ahmadkabdullah/pxtanks#readme",
+  "dependencies": {
+    "pixi.js": "^6.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.7.0"
+  }
+}
