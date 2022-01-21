@@ -10,8 +10,8 @@ export class Entity {
 		this.texture = "";
 
 		// sprite properties
-		this.position = [Config.halfCellSize, Config.halfCellSize];
-		this.size = [Config.cellSize, Config.cellSize];
+		this.position = [Config.screen.cellSize / 2, Config.screen.cellSize / 2];
+		this.size = [Config.screen.cellSize, Config.screen.cellSize];
 		// direction
 		this.facing = "north";
 
@@ -76,7 +76,7 @@ class Movable extends Entity {
 		this.positionTo = [];
 	}
 
-	toMove(absoluteDirection, moveBy = Config.cellSize) {
+	toMove(absoluteDirection, moveBy = Config.screen.cellSize) {
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving) return;
@@ -118,7 +118,7 @@ class Movable extends Entity {
 export class Tank extends Movable {
 	constructor() {
 		super();
-		this.texture = Config.tanks.texture;
+		this.texture = Config.textures.tanks.normal;
 
 		// the statistics of the tank
 		this.stats = {
@@ -148,7 +148,7 @@ export class Tank extends Movable {
 		);
 
 		// shoot to where tank is facing
-		missile.toMove(this.facing, Config.cellSize*100)
+		missile.toMove(this.facing, Config.screen.cellSize * Config.screen.height * 2);
 
 		// increase shot count of tank
 		this.stats.shots += 1;
@@ -158,10 +158,9 @@ export class Tank extends Movable {
 export class Missile extends Movable {
 	constructor(tankThatFired, speed, damage) {
 		super();
-		this.texture = 'assets/missile.png';
+		this.texture = Config.textures.missiles.normal;
 
 		this.sprite.zIndex = -3;
-		console.log(this.sprite.zIndex);
 
 		// missiles have a damage property
 		this.speed = speed;
@@ -200,6 +199,7 @@ export class Wall extends UnMovable {
 	constructor() {
 		super();
 
+		this.health = Config.walls.baseHealth;
 		this.isDamagable = true;
 	}
 }

@@ -8,7 +8,8 @@ export class Game {
 	constructor() {
 		// runner is a pixi app
 		this.runner = new Pixi.Application({
-			width: Config.screen.width, height: Config.screen.height,
+			width: Config.screen.cells * Config.screen.cellSize,
+			height: Config.screen.rows * Config.screen.cellSize,
 			resolution: window.devicePixelRatio || 1,
 		});
 		// add game unto html file
@@ -63,8 +64,8 @@ export class Game {
 	// change cell position to pixel (3,4 = 125,175)
 	atCell(cell, row) {
 		return [
-			(cell * Config.cellSize) - Config.halfCellSize,
-			(row * Config.cellSize) - Config.halfCellSize,
+			(cell * Config.screen.cellSize) - (Config.screen.cellSize/2),
+			(row * Config.screen.cellSize) - (Config.screen.cellSize/2),
 		]
 	}
 

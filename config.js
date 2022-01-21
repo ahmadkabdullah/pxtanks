@@ -1,22 +1,32 @@
 export const Config = {
 	screen: {
-		width: 700,
-		height: 700,
+		cells: 14,
+		rows: 14,
+		cellSize: 50,
+	},
+
+	textures: {
+		tanks: {
+			normal: 'assets/tank.png',
+		},
+
+		missiles: {
+			normal: 'assets/missile.png',
+		}
 	},
 
 	tanks: {
-		texture: 'assets/tank.png',
-		baseHealth: 100,
-		baseMissileDamage: 2,
-		baseMissileSpeed: 2,
-		baseShootingRate: 1,
+		baseHealth: 200,
+		baseMissileDamage: 10,
+		baseMissileSpeed: 10,
+		baseShootingRate: 10,
 		baseSpeed: 4,
 	},
 
-	missiles: {
-
+	floors: {
 	},
 
-	cellSize: 50,
-	halfCellSize: 25,
+	walls: {
+		baseHealth: 100,
+	},
 }
