@@ -1,5 +1,5 @@
 export const Config = {
-	screen: {
+	game: {
 		cells: 14,
 		rows: 14,
 		cellSize: 50,

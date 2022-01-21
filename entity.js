@@ -226,7 +226,7 @@ export class Wall extends UnMovable {
 		super();
 
 		// textures
-		this.setTextures(...Config.textures.walls)
+		this.setTextures(Config.textures.walls.normal, Config.textures.walls.destroyed)
 
 		this.health = Config.walls.baseHealth;
 		this.isDamagable = true;
