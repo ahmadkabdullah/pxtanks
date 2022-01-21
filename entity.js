@@ -140,6 +140,15 @@ export class Tank extends Movable {
 	}
 
 	shootMissile(game) {
+		// if already firing, don't move, else, fire
+		if (this.isFiring) return;
+		else this.isFiring = true;
+
+		// don't let tank fire more than shootingRate per second
+		setTimeout((tank = this) => {
+			tank.isFiring = false
+		}, 100 * (10 - this.shootingRate));
+
 		// add missile unto the game
 		const missile = game.addEntity(
 			new Missile(this, this.missileSpeed, this.missileDamage),

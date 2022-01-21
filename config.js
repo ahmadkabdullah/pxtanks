@@ -19,7 +19,7 @@ export const Config = {
 		baseHealth: 200,
 		baseMissileDamage: 10,
 		baseMissileSpeed: 10,
-		baseShootingRate: 10,
+		baseShootingRate: 1,
 		baseSpeed: 4,
 	},
 
