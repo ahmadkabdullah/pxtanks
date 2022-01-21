@@ -69,84 +69,90 @@ export class Game {
 		]
 	}
 
+	// a function to be run for handling all movement
 	updateMoves(delta) {
 		this.field.movable.forEach((entity) => {
 			// do nothing is entity is not moving
 			if (entity.isMoving === false) return;
 
-			// check if in correct position
-			switch (entity.facing) {
-				case 'north':
-				case 'south':
-					if (entity.position[1] === entity.positionTo[1]) {
-						entity.isMoving = false;
-						return;
-					}
-					break;
-				case 'east':
-				case 'west':
-					if (entity.position[0] === entity.positionTo[0]) {
-						entity.isMoving = false;
-						return;
-					}
-					break;
-			}
+			// if the entity has reached positionTo, skip it
+			if (this.hasEntityReached(entity)) return;
 
-			// move entity to positionTo using its speed
-
-			switch (entity.facing) {
-				case 'north': {
-					const mustBeAt = entity.positionTo[1];
-					let nextAt = entity.position[1] - (entity.speed + delta);
-
-					// if there will be extra account for it
-					if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
-
-					// set new position
-					entity.setPosition(entity.position[0], nextAt);
-					break;
-				}
-
-				case 'south': {
-					const mustBeAt = entity.positionTo[1];
-					let nextAt = entity.position[1] + (entity.speed + delta);
-
-					// if there will be extra account for it
-					if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
-
-					// set new position
-					entity.setPosition(entity.position[0], nextAt)
-					break;
-				}
-
-				case 'west': {
-					const mustBeAt = entity.positionTo[0];
-					let nextAt = entity.position[0] - (entity.speed + delta);
-
-					// if there will be extra account for it
-					if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
-
-					// set new position
-					entity.setPosition(nextAt, entity.position[1])
-					break;
-				}
-
-				case 'east': {
-					const mustBeAt = entity.positionTo[0];
-					let nextAt = entity.position[0] + (entity.speed + delta);
-
-					// if there will be extra account for it
-					if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
-
-					// set new position
-					entity.setPosition(nextAt, entity.position[1]);
-					break;
-				}
-
-				default: {
-					console.log("g.loop:g.updatemoves: no direction?")
-				}
-			}
+			// move the entity towards positionTo
+			this.moveEntity(entity, delta);
 		});
+	}
+
+	// check to see if position was reached
+	hasEntityReached(entity) {
+		switch (entity.facing) {
+			case 'north':
+			case 'south':
+				if (entity.position[1] === entity.positionTo[1]) {
+					entity.isMoving = false;
+					return true;
+				}
+				break;
+			case 'east':
+			case 'west':
+				if (entity.position[0] === entity.positionTo[0]) {
+					entity.isMoving = false;
+					return true;
+				}
+				break;
+		}
+	}
+
+	// move entity closer to positionTo using its speed
+	moveEntity(entity, delta) {
+		switch (entity.facing) {
+			case 'north': {
+				const mustBeAt = entity.positionTo[1];
+				let nextAt = entity.position[1] - (entity.speed + delta);
+
+				// if there will be extra account for it
+				if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
+
+				// set new position
+				entity.setPosition(entity.position[0], nextAt);
+				break;
+			}
+
+			case 'south': {
+				const mustBeAt = entity.positionTo[1];
+				let nextAt = entity.position[1] + (entity.speed + delta);
+
+				// if there will be extra account for it
+				if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
+
+				// set new position
+				entity.setPosition(entity.position[0], nextAt)
+				break;
+			}
+
+			case 'west': {
+				const mustBeAt = entity.positionTo[0];
+				let nextAt = entity.position[0] - (entity.speed + delta);
+
+				// if there will be extra account for it
+				if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
+
+				// set new position
+				entity.setPosition(nextAt, entity.position[1])
+				break;
+			}
+
+			case 'east': {
+				const mustBeAt = entity.positionTo[0];
+				let nextAt = entity.position[0] + (entity.speed + delta);
+
+				// if there will be extra account for it
+				if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
+
+				// set new position
+				entity.setPosition(nextAt, entity.position[1]);
+				break;
+			}
+		}
 	}
 }
