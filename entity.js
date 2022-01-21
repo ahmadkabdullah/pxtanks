@@ -7,8 +7,8 @@ export class Entity {
 		this.sprite = {};
 
 		// sprite properties
-		this.position = [Config.screen.cellSize / 2, Config.screen.cellSize / 2];
-		this.size = [Config.screen.cellSize, Config.screen.cellSize];
+		this.position = [Config.game.cellSize / 2, Config.game.cellSize / 2];
+		this.size = [Config.game.cellSize, Config.game.cellSize];
 		// direction
 		this.facing = "north";
 
@@ -89,7 +89,7 @@ class Movable extends Entity {
 		this.positionTo = [];
 	}
 
-	toMove(absoluteDirection, moveBy = Config.screen.cellSize) {
+	toMove(absoluteDirection, moveBy = Config.game.cellSize) {
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving) return;
@@ -172,7 +172,7 @@ export class Tank extends Movable {
 		);
 
 		// shoot to where tank is facing
-		missile.toMove(this.facing, Config.screen.cellSize * Config.screen.height * 2);
+		missile.toMove(this.facing, Config.game.cellSize * Config.game.height * 2);
 
 		// increase shot count of tank
 		this.stats.shots += 1;
