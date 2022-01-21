@@ -53,9 +53,6 @@ export class Game {
 			// do nothing is entity is not moving
 			if (entity.isMoving !== true) return;
 
-			// if the entity has reached moveTo, skip it
-			if (this.hasEntityReached(entity)) return;
-
 			// move the entity towards moveTo
 			this.moveEntity(entity, delta);
 		});
@@ -76,7 +73,7 @@ export class Game {
 		// else calculate the distance to move by speed
 
 		// where the entity should move
-		let nextAtX = 0, nextAtY = 0;
+		let nextAtX = isAtX, nextAtY = isAtY;
 
 		// different calculation for each direction
 		switch (entity.facing) {
