@@ -76,7 +76,7 @@ class Movable extends Entity {
 		this.positionTo = [];
 	}
 
-	toMove(absoluteDirection) {
+	toMove(absoluteDirection, moveBy = Config.cellSize) {
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving) return;
@@ -89,26 +89,26 @@ class Movable extends Entity {
 		switch (absoluteDirection) {
 			case "east":
 				this.positionTo = [
-					this.position[0] + Config.cellSize,
+					this.position[0] + moveBy,
 					this.position[1],
 				];
 				break;
 			case "west":
 				this.positionTo = [
-					this.position[0] - Config.cellSize,
+					this.position[0] - moveBy,
 					this.position[1],
 				];
 				break;
 			case "north":
 				this.positionTo = [
 					this.position[0],
-					this.position[1] - Config.cellSize,
+					this.position[1] - moveBy,
 				];
 				break;
 			case "south":
 				this.positionTo = [
 					this.position[0],
-					this.position[1] + Config.cellSize,
+					this.position[1] + moveBy,
 				];
 				break;
 		}
@@ -141,11 +141,14 @@ export class Tank extends Movable {
 
 	shootMissile(game) {
 		// add missile unto the game
-		game.addEntity(
+		const missile = game.addEntity(
 			new Missile(this, this.missileSpeed, this.missileDamage),
 			this.position[0],
 			this.position[1],
 		);
+
+		// shoot to where tank is facing
+		missile.toMove(this.facing, Config.cellSize*100)
 
 		// increase shot count of tank
 		this.stats.shots += 1;
