@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { Tank } from './entity.js';
+import { Tank, Wall } from './entity.js';
 import { Game } from './game.js';
 
 let g = new Game();
 
+g.addEntity(new Wall(), 3, 4);
+g.addEntity(new Wall(), 4, 4);
+g.addEntity(new Wall(), 5, 4);
+
 let bony1 = g.addEntity(new Tank(), 2, 8);
-let bony2 = g.addEntity(new Tank(), 3, 8);
 let bony3 = g.addEntity(new Tank(), 4, 8);
 let bony4 = g.addEntity(new Tank(), 5, 8);
-let bony6 = g.addEntity(new Tank(), 7, 8);
-let bony7 = g.addEntity(new Tank(), 8, 8);
 let bony8 = g.addEntity(new Tank(), 9, 8);
 let bony9 = g.addEntity(new Tank(), 10, 8);
 
