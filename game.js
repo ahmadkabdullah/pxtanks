@@ -61,66 +61,49 @@ export class Game {
 		});
 	}
 
-	// check to see if moveTo position was reached
-	hasEntityReached(entity) {
-		// if destination is reached stop moving
-		if (entity.sprite.y === entity.moveTo[1] &&
-			entity.sprite.x === entity.moveTo[0]) {
-			entity.isMoving = false;
-			return true;
-		}
-	}
-
 	// move entity closer to wanted pos using its speed
 	moveEntity(entity, delta) {
-		switch (entity.facing) {
-			case 'north': {
-				const mustBeAt = entity.moveTo[1];
-				let nextAt = entity.sprite.y - (entity.speed + delta);
+		// where entity is and where it must
+		const isAtX = entity.sprite.x, isAtY = entity.sprite.y;
+		const mustBeAtX = entity.moveTo[0], mustBeAtY = entity.moveTo[1];
 
-				// if there will be extra account for it
-				if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
-
-				// set new position
-				entity.sprite.y = nextAt;
-				break;
-			}
-
-			case 'south': {
-				const mustBeAt = entity.moveTo[1];
-				let nextAt = entity.sprite.y + (entity.speed + delta);
-
-				// if there will be extra account for it
-				if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
-
-				// set new position
-				entity.sprite.y = nextAt;
-				break;
-			}
-
-			case 'west': {
-				const mustBeAt = entity.moveTo[0];
-				let nextAt = entity.sprite.x - (entity.speed + delta);
-
-				// if there will be extra account for it
-				if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
-
-				// set new position
-				entity.sprite.x = nextAt;
-				break;
-			}
-
-			case 'east': {
-				const mustBeAt = entity.moveTo[0];
-				let nextAt = entity.sprite.x + (entity.speed + delta);
-
-				// if there will be extra account for it
-				if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
-
-				// set new position
-				entity.sprite.x = nextAt;
-				break;
-			}
+		// if destination is reached return
+		if (isAtY === mustBeAtY && isAtX === mustBeAtX) {
+			entity.isMoving = false;
+			return;
 		}
+
+		// else calculate the distance to move by speed
+
+		// where the entity should move
+		let nextAtX = 0, nextAtY = 0;
+
+		// different calculation for each direction
+		switch (entity.facing) {
+			case 'north':
+				nextAtY = isAtY - (entity.speed + delta);
+				// if there will be extra account for it
+				if (nextAtY < mustBeAtY) nextAtY += (mustBeAtY - nextAtY);
+				break;
+			case 'south':
+				nextAtY = isAtY + (entity.speed + delta);
+				// if there will be extra account for it
+				if (nextAtY > mustBeAtY) nextAtY -= (nextAtY - mustBeAtY);
+				break;
+			case 'west':
+				nextAtX = isAtX - (entity.speed + delta);
+				// if there will be extra account for it
+				if (nextAtX < mustBeAtX) nextAtX += (mustBeAtX - nextAtX);
+				break;
+			case 'east':
+				nextAtX = isAtX + (entity.speed + delta);
+				// if there will be extra account for it
+				if (nextAtX > mustBeAtX) nextAtX -= (nextAtX - mustBeAtX);
+				break;
+		}
+
+		// set new position
+		entity.sprite.x = nextAtX;
+		entity.sprite.y = nextAtY;
 	}
 }
