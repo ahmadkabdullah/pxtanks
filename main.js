@@ -17,10 +17,10 @@ let bony9 = g.addEntity(new Tank(), 10, 8);
 // listeners for p1
 window.addEventListener('keypress', (e) => {
 	switch(e.key) {
-		case 'w': bony3.toMove('north'); break;
-		case 's': bony3.toMove('south'); break;
-		case 'a': bony3.toMove('west'); break;
-		case 'd': bony3.toMove('east'); break;
+		case 'w': bony3.setMoveTo('north'); break;
+		case 's': bony3.setMoveTo('south'); break;
+		case 'a': bony3.setMoveTo('west'); break;
+		case 'd': bony3.setMoveTo('east'); break;
 	}
 })
 window.addEventListener('keydown', (e) => {
@@ -30,10 +30,10 @@ window.addEventListener('keydown', (e) => {
 // listeners for p2
 window.addEventListener('keydown', (e) => {
 	switch(e.key) {
-		case 'ArrowUp': bony8.toMove('north'); break;
-		case 'ArrowDown': bony8.toMove('south'); break;
-		case 'ArrowRight': bony8.toMove('east'); break;
-		case 'ArrowLeft': bony8.toMove('west'); break;
+		case 'ArrowUp': bony8.setMoveTo('north'); break;
+		case 'ArrowDown': bony8.setMoveTo('south'); break;
+		case 'ArrowRight': bony8.setMoveTo('east'); break;
+		case 'ArrowLeft': bony8.setMoveTo('west'); break;
 	}
 })
 window.addEventListener('keydown', (e) => {

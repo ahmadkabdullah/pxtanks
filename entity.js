@@ -1,15 +1,13 @@
 import { Config } from "./CONFIG.js";
 
-export class Entity {
+class Entity {
 	constructor() {
 		// stores pixi sprite
-		// ! Not to be accessed directly
+		// also position and size
 		this.sprite = {};
 
-		// sprite properties
-		this.position = [Config.game.cellSize / 2, Config.game.cellSize / 2];
-		this.size = [Config.game.cellSize, Config.game.cellSize];
-		// direction
+		// position and direction
+		this.cellPosition = [1, 1];
 		this.facing = "north";
 
 		// health and condition
@@ -47,16 +45,11 @@ export class Entity {
 	}
 
 	// make setting the entity properties transfer to sprite
-	setPosition(x, y) {
-		this.position = [x, y]
-		this.sprite.x = this.position[0];
-		this.sprite.y = this.position[1];
-	}
 
-	setSize(w, h) {
-		this.size = [w, h];
-		this.sprite.width = this.size[0];
-		this.sprite.height = this.size[1];
+	setCellPosition(x, y) {
+		this.cellPosition = [x, y]
+		this.sprite.x = cellToPos(x, y)[0];
+		this.sprite.y = cellToPos(x, y)[1];
 	}
 
 	setFacing(absoluteDirection) {
@@ -80,16 +73,16 @@ export class Entity {
 
 // all movable entities
 
-class Movable extends Entity {
+export class Movable extends Entity {
 	constructor() {
 		super();
 		// movement
 		this.speed = 1;
 		this.isMoving = false;
-		this.positionTo = [];
+		this.moveTo = [];
 	}
 
-	toMove(absoluteDirection, moveBy = Config.game.cellSize) {
+	setMoveTo(absoluteDirection, moveBy = Config.game.cellSize) {
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving) return;
@@ -99,30 +92,23 @@ class Movable extends Entity {
 		this.setFacing(absoluteDirection);
 
 		// set where to move
+		// update cellPosition in advance
 		switch (absoluteDirection) {
-			case "east":
-				this.positionTo = [
-					this.position[0] + moveBy,
-					this.position[1],
-				];
-				break;
 			case "west":
-				this.positionTo = [
-					this.position[0] - moveBy,
-					this.position[1],
-				];
+				this.moveTo = [this.sprite.x - moveBy, this.sprite.y];
+				this.cellPosition[0] -= 1;
+				break;
+			case "east":
+				this.moveTo = [this.sprite.x + moveBy, this.sprite.y];
+				this.cellPosition[0] += 1;
 				break;
 			case "north":
-				this.positionTo = [
-					this.position[0],
-					this.position[1] - moveBy,
-				];
+				this.moveTo = [this.sprite.x, this.sprite.y - moveBy];
+				this.cellPosition[1] -= 1;
 				break;
 			case "south":
-				this.positionTo = [
-					this.position[0],
-					this.position[1] + moveBy,
-				];
+				this.moveTo = [this.sprite.x, this.sprite.y + moveBy];
+				this.cellPosition[1] += 1;
 				break;
 		}
 	}
@@ -164,15 +150,15 @@ export class Tank extends Movable {
 			tank.isFiring = false
 		}, 100 * (10 - this.shootingRate));
 
-		// add missile unto the game
+		// add missile unto the game right in tank cell position
 		const missile = game.addEntity(
 			new Missile(this, this.missileSpeed, this.missileDamage),
-			this.position[0],
-			this.position[1],
+			this.cellPosition[0],
+			this.cellPosition[1],
 		);
 
 		// shoot to where tank is facing
-		missile.toMove(this.facing, Config.game.cellSize * Config.game.height * 2);
+		missile.setMoveTo(this.facing, Config.game.cellSize * Config.game.height * 2);
 
 		// increase shot count of tank
 		this.stats.shots += 1;
@@ -231,4 +217,13 @@ export class Wall extends UnMovable {
 		this.health = Config.walls.baseHealth;
 		this.isDamagable = true;
 	}
+}
+
+
+// change cell position to pixel (3,4 = 125,175)
+function cellToPos(cell, row) {
+	return [
+		(cell * Config.game.cellSize) - Config.game.cellSize / 2,
+		(row * Config.game.cellSize) - Config.game.cellSize / 2,
+	];
 }

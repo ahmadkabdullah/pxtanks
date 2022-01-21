@@ -1,5 +1,4 @@
 import { Config } from './CONFIG.js';
-import { UnMovable, Tank, Missile } from './entity.js';
 
 // eslint-disable-next-line no-undef
 const Pixi = PIXI;
@@ -20,10 +19,7 @@ export class Game {
 
 		// the field contains a list of items
 		// that are on the field (in the game)
-		this.field = {
-			movable: new Map(),
-			unMovable: new Map(),
-		}
+		this.field = new Map();
 	}
 
 	loop(funcWithDelta) {
@@ -31,29 +27,19 @@ export class Game {
 	}
 
 	// add an object to field
-	addEntity(entity, cell, row) {
+	addEntity(entity, cell = 1, row = 1) {
 		// make sprite from texture and set on entity
 		entity.setSprite(new Pixi.Sprite.from(entity.currentTexture));
-
-		// render sprite
+		// render the sprite
 		this.runner.stage.addChild(entity.sprite)
 
 		// generate random id
-		let id = this.getRandomNum();
+		const id = this.getRandomNum();
 
-		// add to field and set position depending on type
-		if (entity instanceof Tank) {
-			this.field.movable.set(id, entity);
-			entity.setPosition(...this.atCell(cell, row));
-		} else if (entity instanceof Missile) {
-			this.field.movable.set(id, entity);
-			entity.setPosition(cell, row);
-		} else if (entity instanceof UnMovable) {
-			this.field.unMovable.set(id, entity);
-		}
-
-		// return as object
-		return this.field.movable.get(id);
+		// set entity unto the field
+		entity.setCellPosition(cell, row);
+		this.field.set(id, entity);
+		return this.field.get(id);
 	}
 
 	// get a random number between 0 and 9999
@@ -61,96 +47,78 @@ export class Game {
 		return Math.floor(Math.random() * 9999)
 	}
 
-	// change cell position to pixel (3,4 = 125,175)
-	atCell(cell, row) {
-		return [
-			(cell * Config.game.cellSize) - (Config.game.cellSize / 2),
-			(row * Config.game.cellSize) - (Config.game.cellSize / 2),
-		]
-	}
-
 	// a function to be run for handling all movement
 	updateMoves(delta) {
-		this.field.movable.forEach((entity) => {
+		this.field.forEach((entity) => {
 			// do nothing is entity is not moving
-			if (entity.isMoving === false) return;
+			if (entity.isMoving !== true) return;
 
-			// if the entity has reached positionTo, skip it
+			// if the entity has reached moveTo, skip it
 			if (this.hasEntityReached(entity)) return;
 
-			// move the entity towards positionTo
+			// move the entity towards moveTo
 			this.moveEntity(entity, delta);
 		});
 	}
 
-	// check to see if position was reached
+	// check to see if moveTo position was reached
 	hasEntityReached(entity) {
-		switch (entity.facing) {
-			case 'north':
-			case 'south':
-				if (entity.position[1] === entity.positionTo[1]) {
-					entity.isMoving = false;
-					return true;
-				}
-				break;
-			case 'east':
-			case 'west':
-				if (entity.position[0] === entity.positionTo[0]) {
-					entity.isMoving = false;
-					return true;
-				}
-				break;
+		// if destination is reached stop moving
+		if (entity.sprite.y === entity.moveTo[1] &&
+			entity.sprite.x === entity.moveTo[0]) {
+			entity.isMoving = false;
+			return true;
 		}
 	}
 
-	// move entity closer to positionTo using its speed
+	// move entity closer to wanted pos using its speed
 	moveEntity(entity, delta) {
 		switch (entity.facing) {
 			case 'north': {
-				const mustBeAt = entity.positionTo[1];
-				let nextAt = entity.position[1] - (entity.speed + delta);
+				const mustBeAt = entity.moveTo[1];
+				let nextAt = entity.sprite.y - (entity.speed + delta);
 
 				// if there will be extra account for it
 				if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
 
 				// set new position
-				entity.setPosition(entity.position[0], nextAt);
+				entity.sprite.y = nextAt;
 				break;
 			}
 
 			case 'south': {
-				const mustBeAt = entity.positionTo[1];
-				let nextAt = entity.position[1] + (entity.speed + delta);
+				const mustBeAt = entity.moveTo[1];
+				let nextAt = entity.sprite.y + (entity.speed + delta);
 
 				// if there will be extra account for it
 				if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
 
 				// set new position
-				entity.setPosition(entity.position[0], nextAt)
+				entity.sprite.y = nextAt;
 				break;
 			}
 
 			case 'west': {
-				const mustBeAt = entity.positionTo[0];
-				let nextAt = entity.position[0] - (entity.speed + delta);
+				const mustBeAt = entity.moveTo[0];
+				let nextAt = entity.sprite.x - (entity.speed + delta);
 
 				// if there will be extra account for it
 				if (nextAt < mustBeAt) nextAt += (mustBeAt - nextAt);
 
 				// set new position
-				entity.setPosition(nextAt, entity.position[1])
+				entity.sprite.x = nextAt;
 				break;
 			}
 
 			case 'east': {
-				const mustBeAt = entity.positionTo[0];
-				let nextAt = entity.position[0] + (entity.speed + delta);
+				const mustBeAt = entity.moveTo[0];
+				let nextAt = entity.sprite.x + (entity.speed + delta);
 
 				// if there will be extra account for it
 				if (nextAt > mustBeAt) nextAt -= (nextAt - mustBeAt);
 
 				// set new position
-				entity.setPosition(nextAt, entity.position[1]);
+				entity.sprite.x = nextAt;
 				break;
 			}
 		}
