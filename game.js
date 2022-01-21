@@ -33,7 +33,7 @@ export class Game {
 	// add an object to field
 	addEntity(entity, cell, row) {
 		// make sprite from texture and set on entity
-		entity.setSprite(new Pixi.Sprite.from(entity.texture));
+		entity.setSprite(new Pixi.Sprite.from(entity.currentTexture));
 
 		// render sprite
 		this.runner.stage.addChild(entity.sprite)
@@ -64,8 +64,8 @@ export class Game {
 	// change cell position to pixel (3,4 = 125,175)
 	atCell(cell, row) {
 		return [
-			(cell * Config.screen.cellSize) - (Config.screen.cellSize/2),
-			(row * Config.screen.cellSize) - (Config.screen.cellSize/2),
+			(cell * Config.screen.cellSize) - (Config.screen.cellSize / 2),
+			(row * Config.screen.cellSize) - (Config.screen.cellSize / 2),
 		]
 	}
 

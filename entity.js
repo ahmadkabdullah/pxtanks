@@ -5,9 +5,6 @@ export class Entity {
 		// stores pixi sprite
 		// ! Not to be accessed directly
 		this.sprite = {};
-		// the default texture
-		// TODO expand
-		this.texture = "";
 
 		// sprite properties
 		this.position = [Config.screen.cellSize / 2, Config.screen.cellSize / 2];
@@ -21,6 +18,17 @@ export class Entity {
 		this.health = 1;
 	}
 
+	setTextures(normalTexture, destroyedTexture) {
+		// set textures for entity from config
+		this.textures = {
+			normal: normalTexture,
+			destroyed: destroyedTexture,
+		}
+
+		// set current texture
+		this.currentTexture = this.textures.normal;
+	}
+
 	setSprite(spriteToAdd) {
 		// set sprite on entity
 		this.sprite = spriteToAdd;
@@ -30,7 +38,12 @@ export class Entity {
 	// take damage and when 0, change to destroyed
 	takeDamage(damageAmount) {
 		this.health -= damageAmount;
-		if (this.health <= 0) this.isDestroyed = true;
+
+		// if entity is destroyed
+		if (this.health <= 0) {
+			this.isDestroyed = true;
+			this.currentTexture = this.textures.destroyed;
+		}
 	}
 
 	// make setting the entity properties transfer to sprite
@@ -118,7 +131,9 @@ class Movable extends Entity {
 export class Tank extends Movable {
 	constructor() {
 		super();
-		this.texture = Config.textures.tanks.normal;
+
+		// textures
+		this.setTextures(Config.textures.tanks.normal, Config.textures.tanks.destroyed)
 
 		// the statistics of the tank
 		this.stats = {
@@ -167,7 +182,9 @@ export class Tank extends Movable {
 export class Missile extends Movable {
 	constructor(tankThatFired, speed, damage) {
 		super();
-		this.texture = Config.textures.missiles.normal;
+
+		// textures
+		this.setTextures(Config.textures.missiles.normal, Config.textures.missiles.destroyed)
 
 		this.sprite.zIndex = -3;
 
@@ -207,6 +224,9 @@ export class Floor extends UnMovable {
 export class Wall extends UnMovable {
 	constructor() {
 		super();
+
+		// textures
+		this.setTextures(...Config.textures.walls)
 
 		this.health = Config.walls.baseHealth;
 		this.isDamagable = true;
