@@ -1,4 +1,5 @@
 import { Config } from './CONFIG.js';
+import { Utils } from './utils.js';
 
 // eslint-disable-next-line no-undef
 const Pixi = PIXI;
@@ -34,17 +35,12 @@ export class Game {
 		this.runner.stage.addChild(entity.sprite)
 
 		// generate random id
-		const id = this.getRandomNum();
+		const id = Utils.getRandomNum();
 
 		// set entity unto the field
 		entity.setCellPosition(cell, row);
 		this.field.set(id, entity);
 		return this.field.get(id);
-	}
-
-	// get a random number between 0 and 9999
-	getRandomNum() {
-		return Math.floor(Math.random() * 9999)
 	}
 
 	// a function to be run for handling all movement
@@ -66,6 +62,7 @@ export class Game {
 
 		// if destination is reached return
 		if (isAtY === mustBeAtY && isAtX === mustBeAtX) {
+			entity.cellPosition = Utils.posToCell(isAtX, isAtY);
 			entity.isMoving = false;
 			return;
 		}

@@ -1,4 +1,5 @@
 import { Config } from "./CONFIG.js";
+import { Utils } from "./utils.js";
 
 class Entity {
 	constructor() {
@@ -48,8 +49,8 @@ class Entity {
 
 	setCellPosition(x, y) {
 		this.cellPosition = [x, y]
-		this.sprite.x = cellToPos(x, y)[0];
-		this.sprite.y = cellToPos(x, y)[1];
+		this.sprite.x = Utils.cellToPos(x, y)[0];
+		this.sprite.y = Utils.cellToPos(x, y)[1];
 	}
 
 	setFacing(absoluteDirection) {
@@ -96,19 +97,15 @@ export class Movable extends Entity {
 		switch (absoluteDirection) {
 			case "west":
 				this.moveTo = [this.sprite.x - moveBy, this.sprite.y];
-				this.cellPosition[0] -= 1;
 				break;
 			case "east":
 				this.moveTo = [this.sprite.x + moveBy, this.sprite.y];
-				this.cellPosition[0] += 1;
 				break;
 			case "north":
 				this.moveTo = [this.sprite.x, this.sprite.y - moveBy];
-				this.cellPosition[1] -= 1;
 				break;
 			case "south":
 				this.moveTo = [this.sprite.x, this.sprite.y + moveBy];
-				this.cellPosition[1] += 1;
 				break;
 		}
 	}
@@ -217,13 +214,4 @@ export class Wall extends UnMovable {
 		this.health = Config.walls.baseHealth;
 		this.isDamagable = true;
 	}
-}
-
-
-// change cell position to pixel (3,4 = 125,175)
-function cellToPos(cell, row) {
-	return [
-		(cell * Config.game.cellSize) - Config.game.cellSize / 2,
-		(row * Config.game.cellSize) - Config.game.cellSize / 2,
-	];
 }
