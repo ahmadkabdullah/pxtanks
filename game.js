@@ -49,7 +49,7 @@ export class Game {
 
 	// a function to be run for handling all movement
 	updateMoves(delta) {
-		for (let [idKey, entity] of this.field.entries()) {
+		for (let [, entity] of this.field.entries()) {
 			// if it isn't moving, don't touch it
 			if (entity.isMoving !== true) continue;
 
@@ -71,7 +71,7 @@ export class Game {
 	// detect collision of moving objects
 	detectCollision(entity) {
 		// go through all entitites on field
-		for (let [idKey, otherEntity] of this.field.entries()) {
+		for (let [, otherEntity] of this.field.entries()) {
 			// skip comparison to the entity itself
 			if (entity.id === otherEntity.id) continue;
 
