@@ -57,47 +57,41 @@ export class Game {
 	// move entity closer to wanted pos using its speed
 	moveEntity(entity, delta) {
 		// where entity is and where it must
-		const isAtX = entity.sprite.x, isAtY = entity.sprite.y;
-		const mustBeAtX = entity.moveTo[0], mustBeAtY = entity.moveTo[1];
+		const isAt = [entity.sprite.x, entity.sprite.y];
+		const mustBeAt = entity.sprite.moveTo;
 
 		// if destination is reached return
-		if (isAtY === mustBeAtY && isAtX === mustBeAtX) {
-			entity.cellPosition = Utils.posToCell(isAtX, isAtY);
+		if (isAt[1] === mustBeAt[1] && isAt[0] === mustBeAt[0]) {
+			entity.positionCell = Utils.posToCell(isAt[0], isAt[1]);
 			entity.isMoving = false;
 			return;
 		}
 
-		// else calculate the distance to move by speed
-
 		// where the entity should move
-		let nextAtX = isAtX, nextAtY = isAtY;
-
+		let nextAt = [isAt[0], isAt[1]];
 		// different calculation for each direction
 		switch (entity.facing) {
 			case 'north':
-				nextAtY = isAtY - (entity.speed + delta);
+				nextAt[1] = isAt[1] - (entity.speed + delta);
 				// if there will be extra account for it
-				if (nextAtY < mustBeAtY) nextAtY += (mustBeAtY - nextAtY);
+				if (nextAt[1] < mustBeAt[1]) nextAt[1] += (mustBeAt[1] - nextAt[1]);
 				break;
 			case 'south':
-				nextAtY = isAtY + (entity.speed + delta);
-				// if there will be extra account for it
-				if (nextAtY > mustBeAtY) nextAtY -= (nextAtY - mustBeAtY);
+				nextAt[1] = isAt[1] + (entity.speed + delta);
+				if (nextAt[1] > mustBeAt[1]) nextAt[1] -= (nextAt[1] - mustBeAt[1]);
 				break;
 			case 'west':
-				nextAtX = isAtX - (entity.speed + delta);
-				// if there will be extra account for it
-				if (nextAtX < mustBeAtX) nextAtX += (mustBeAtX - nextAtX);
+				nextAt[0] = isAt[0] - (entity.speed + delta);
+				if (nextAt[0] < mustBeAt[0]) nextAt[0] += (mustBeAt[0] - nextAt[0]);
 				break;
 			case 'east':
-				nextAtX = isAtX + (entity.speed + delta);
-				// if there will be extra account for it
-				if (nextAtX > mustBeAtX) nextAtX -= (nextAtX - mustBeAtX);
+				nextAt[0] = isAt[0] + (entity.speed + delta);
+				if (nextAt[0] > mustBeAt[0]) nextAt[0] -= (nextAt[0] - mustBeAt[0]);
 				break;
 		}
 
 		// set new position
-		entity.sprite.x = nextAtX;
-		entity.sprite.y = nextAtY;
+		entity.sprite.x = nextAt[0];
+		entity.sprite.y = nextAt[1];
 	}
 }

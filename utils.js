@@ -12,8 +12,8 @@ export class Utils {
 	// change pixel to cell position (75,25 = 2,1)
 	static posToCell(x, y) {
 		return [
-			(x + Config.game.cellSize/2) / Config.game.cellSize,
-			(y + Config.game.cellSize/2) / Config.game.cellSize,
+			Math.floor((x + Config.game.cellSize/2) / Config.game.cellSize),
+			Math.floor((y + Config.game.cellSize/2) / Config.game.cellSize),
 		];
 	}
 

@@ -8,7 +8,7 @@ class Entity {
 		this.sprite = {};
 
 		// position and direction
-		this.cellPosition = [1, 1];
+		this.positionCell = [1, 1];
 		this.facing = "north";
 
 		// health and condition
@@ -48,7 +48,7 @@ class Entity {
 	// make setting the entity properties transfer to sprite
 
 	setCellPosition(x, y) {
-		this.cellPosition = [x, y]
+		this.positionCell = [x, y]
 		this.sprite.x = Utils.cellToPos(x, y)[0];
 		this.sprite.y = Utils.cellToPos(x, y)[1];
 	}
@@ -80,10 +80,12 @@ export class Movable extends Entity {
 		// movement
 		this.speed = 1;
 		this.isMoving = false;
-		this.moveTo = [];
+		// store destination in cell and pixel
+		this.moveToCell = [];
 	}
 
-	setMoveTo(absoluteDirection, moveBy = Config.game.cellSize) {
+	move(absoluteDirection, numOfCells = 1) {
+		// ! to recheck
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving) return;
@@ -92,22 +94,19 @@ export class Movable extends Entity {
 		// set to face direction to move in 
 		this.setFacing(absoluteDirection);
 
+		// set default values
+		this.moveToCell = [this.positionCell[0], this.positionCell[1]];
+
 		// set where to move
-		// update cellPosition in advance
 		switch (absoluteDirection) {
-			case "west":
-				this.moveTo = [this.sprite.x - moveBy, this.sprite.y];
-				break;
-			case "east":
-				this.moveTo = [this.sprite.x + moveBy, this.sprite.y];
-				break;
-			case "north":
-				this.moveTo = [this.sprite.x, this.sprite.y - moveBy];
-				break;
-			case "south":
-				this.moveTo = [this.sprite.x, this.sprite.y + moveBy];
-				break;
+			case "west": this.moveToCell[0] -= numOfCells; break;
+			case "east": this.moveToCell[0] += numOfCells; break;
+			case "north": this.moveToCell[1] -= numOfCells; break;
+			case "south": this.moveToCell[1] += numOfCells; break;
 		}
+
+		// convert to pixel
+		this.sprite.moveTo = Utils.cellToPos(...this.moveToCell)
 	}
 }
 
@@ -150,12 +149,12 @@ export class Tank extends Movable {
 		// add missile unto the game right in tank cell position
 		const missile = game.addEntity(
 			new Missile(this, this.missileSpeed, this.missileDamage),
-			this.cellPosition[0],
-			this.cellPosition[1],
+			this.positionCell[0],
+			this.positionCell[1],
 		);
 
 		// shoot to where tank is facing
-		missile.setMoveTo(this.facing, Config.game.cellSize * Config.game.height * 2);
+		missile.move(this.facing, Config.game.cells * 2);
 
 		// increase shot count of tank
 		this.stats.shots += 1;
