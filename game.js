@@ -3,7 +3,7 @@ import { Missile } from './entity.js';
 import { Utils } from './utils.js';
 
 // eslint-disable-next-line no-undef
-const Pixi = PIXI;
+export const Pixi = PIXI;
 
 export class Game {
 	constructor() {
@@ -89,13 +89,21 @@ export class Game {
 					// when entity is a missile (on missile hit)
 					if (entity instanceof Missile) {
 						entity.hasHit(otherEntity);
+						this.field.delete(entity.id);
 					}
 
 					return true;
 			}
 
-			// compare with game borders
+			// when collides with game borders
 			if (entity.moveToCell[0] < 1 || entity.moveToCell[0] > Config.game.cells || entity.moveToCell[1] < 1 || entity.moveToCell[1] > Config.game.rows) {
+
+				// when entity is a missile (on missile hit)
+				if (entity instanceof Missile) {
+					entity.hasHit('border');
+					this.field.delete(entity.id);
+				}
+
 				return true;
 			}
 		}

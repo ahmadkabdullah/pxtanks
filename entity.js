@@ -1,5 +1,6 @@
 import { Config } from "./CONFIG.js";
 import { Utils } from "./utils.js";
+import { Pixi } from "./game.js";
 
 class Entity {
 	constructor() {
@@ -45,6 +46,9 @@ class Entity {
 		if (this.health <= 0) {
 			this.isDestroyed = true;
 			this.currentTexture = this.textures.destroyed;
+
+			// ! temporary: set new texture
+			this.sprite.texture = new Pixi.Texture.from(this.currentTexture);
 		}
 	}
 
@@ -88,6 +92,9 @@ export class Movable extends Entity {
 	}
 
 	move(absoluteDirection) {
+		// don't move if tank is destroyed
+		if (this.isDestroyed) return;
+
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving == true) return;
@@ -181,6 +188,12 @@ export class Missile extends Movable {
 	}
 
 	hasHit(hitEntity) {
+		// destroy missile on impact
+		this.sprite.destroy();
+
+		// do nothing else if hit the border
+		if (hitEntity === 'border') return;
+
 		// damage entity
 		hitEntity.takeDamage(this.damage);
 		// add to tank's hit score

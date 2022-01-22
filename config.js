@@ -17,6 +17,7 @@ export const Config = {
 
 		walls: {
 			normal: 'assets/wall.png',
+			destroyed: 'assets/walldest.png',
 		},
 	},
 
