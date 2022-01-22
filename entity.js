@@ -3,8 +3,11 @@ import { Utils } from "./utils.js";
 
 class Entity {
 	constructor() {
+		// the unique id of the entity
+		this.id = 0;
+
 		// stores pixi sprite
-		// also position and size
+		// also pixel position and size
 		this.sprite = {};
 
 		// position and direction
@@ -79,7 +82,7 @@ export class Movable extends Entity {
 		super();
 		// movement
 		this.speed = 1;
-		this.isMoving = false;
+		this.isMoving = 'no';
 		// store destination in cell and pixel
 		this.moveToCell = [];
 	}
@@ -87,8 +90,9 @@ export class Movable extends Entity {
 	move(absoluteDirection, numOfCells = 1) {
 		// if already moving, don't move
 		// otherwise move
-		if (this.isMoving) return;
-		else this.isMoving = true;
+		if (this.isMoving !== 'no') return;
+		else if (this instanceof Missile) this.isMoving = 'moving';
+		else this.isMoving = 'preparing';
 
 		// set default values
 		this.moveToCell = [this.positionCell[0], this.positionCell[1]];
@@ -177,12 +181,10 @@ export class Missile extends Movable {
 	}
 
 	hasHit(hitEntity) {
-		// cause damage
+		// damage entity
 		hitEntity.takeDamage(this.damage);
 		// add to tank's hit score
 		this.tank.stats.hits += 1
-		// destroy the sprite
-		this.sprite.destroy();
 	}
 }
 
