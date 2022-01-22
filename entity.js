@@ -46,6 +46,7 @@ class Entity {
 		if (this.health <= 0) {
 			this.isDestroyed = true;
 			this.currentTexture = this.textures.destroyed;
+			this.sprite.zIndex = -9;
 
 			// ! temporary: set new texture
 			this.sprite.texture = new Pixi.Texture.from(this.currentTexture);
@@ -176,8 +177,6 @@ export class Missile extends Movable {
 
 		// textures
 		this.setTextures(Config.textures.missiles.normal, Config.textures.missiles.destroyed)
-
-		this.sprite.zIndex = -3;
 
 		// missiles have a damage property
 		this.speed = speed;

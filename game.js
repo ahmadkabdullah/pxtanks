@@ -13,11 +13,15 @@ export class Game {
 			height: Config.game.rows * Config.game.cellSize,
 			resolution: window.devicePixelRatio || 1,
 		});
+
 		// add game unto html file
 		document.body.appendChild(this.runner.view);
 
+		// container for all entites in the pixi app
+		this.container = new Pixi.Container;
+		this.runner.stage.addChild(this.container);
 		// make zIndex usable
-		this.runner.stage.sortableChildren = true;
+		this.container.sortableChildren = true;
 
 		// the field contains a list of items
 		// that are on the field (in the game)
@@ -32,8 +36,14 @@ export class Game {
 	addEntity(entity, cell = 1, row = 1) {
 		// make sprite from texture and set on entity
 		entity.setSprite(new Pixi.Sprite.from(entity.currentTexture));
+
 		// render the sprite
-		this.runner.stage.addChild(entity.sprite)
+		this.container.addChild(entity.sprite)
+
+		// set z axis for different entitites
+		if (entity instanceof Missile) {
+			entity.sprite.zIndex = -1;
+		}
 
 		// generate random id and set on entity
 		const id = Utils.getRandomNum();

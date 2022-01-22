@@ -24,7 +24,7 @@ export const Config = {
 	tanks: {
 		baseHealth: 200,
 		baseMissileDamage: 20,
-		baseMissileSpeed: 10,
+		baseMissileSpeed: 30,
 		baseShootingRate: 1,
 		baseSpeed: 4,
 	},
