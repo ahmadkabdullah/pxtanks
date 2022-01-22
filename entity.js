@@ -85,14 +85,10 @@ export class Movable extends Entity {
 	}
 
 	move(absoluteDirection, numOfCells = 1) {
-		// ! to recheck
 		// if already moving, don't move
 		// otherwise move
 		if (this.isMoving) return;
 		else this.isMoving = true;
-
-		// set to face direction to move in 
-		this.setFacing(absoluteDirection);
 
 		// set default values
 		this.moveToCell = [this.positionCell[0], this.positionCell[1]];
@@ -104,6 +100,9 @@ export class Movable extends Entity {
 			case "north": this.moveToCell[1] -= numOfCells; break;
 			case "south": this.moveToCell[1] += numOfCells; break;
 		}
+
+		// set to face direction to move in 
+		this.setFacing(absoluteDirection);
 
 		// convert to pixel
 		this.sprite.moveTo = Utils.cellToPos(...this.moveToCell)
