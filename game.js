@@ -50,28 +50,19 @@ export class Game {
 	// a function to be run for handling all movement
 	updateMoves(delta) {
 		for (let [idKey, entity] of this.field.entries()) {
-			// if the entity is preparing to move, check collision
-			if (entity.isMoving === 'preparing') {
-				switch (this.detectCollision(entity)) {
-					// if there will be collision
-					case true:
-						entity.isMoving = 'no';
-						entity.moveToCell = entity.positionCell;
-						break;
-					// if there was no collision ahead
-					case false:
-						entity.positionCell = entity.moveToCell;
-						entity.isMoving = 'moving';
-						break;
-				}
+			// if it isn't moving, don't touch it
+			if (entity.isMoving !== true) continue;
+
+			// check collision and stop if there is 
+			if (this.detectCollision(entity)) {
+				entity.isMoving = false;
+				entity.moveToCell = entity.positionCell;
+			} else {
+				entity.positionCell = entity.moveToCell;
 			}
 
 			// move the entity if it is ready for moving
-			if (entity.isMoving === 'moving') {
-				// for missiles
-				if (entity instanceof Missile) this.missileCollision(entity);
-
-				// for others
+			if (entity.isMoving) {
 				this.moveEntity(entity, delta);
 			}
 		}
@@ -84,10 +75,22 @@ export class Game {
 			// skip comparison to the entity itself
 			if (entity.id === otherEntity.id) continue;
 
-			// compare with other entity's position and would-be-position
+			// skip collision with non-damagable and destroyed entitites
+			if (otherEntity.isDamagable === false || otherEntity.isDestroyed) continue;
+
+			// if entity is a missile skip comparison fired
+			if (entity instanceof Missile && entity.tank.id === otherEntity.id) continue;
+
+			// when collision occurs
 			switch (JSON.stringify(entity.moveToCell)) {
 				case JSON.stringify(otherEntity.positionCell):
 				case JSON.stringify(otherEntity.moveToCell):
+
+					// when entity is a missile (on missile hit)
+					if (entity instanceof Missile) {
+						entity.hasHit(otherEntity);
+					}
+
 					return true;
 			}
 
@@ -100,37 +103,6 @@ export class Game {
 		return false;
 	}
 
-	// deal with collion of missiles
-	missileCollision(entity) {
-		for (let [idKey, otherEntity] of this.field.entries()) {
-			// skip comparison to the entity itself and tank
-			switch (otherEntity.id) {
-				case entity.tank.id:
-				case entity.id:
-					continue;
-			}
-
-			console.log("COMP", entity.id, otherEntity.id);
-
-			// compare with other entity's position and would-be-position
-			if (entity.sprite.x === otherEntity.sprite.x && entity.sprite.y === otherEntity.sprite.y) {
-				entity.hasHit(otherEntity);
-				this.field.delete(entity.id);
-				console.log("have hit", otherEntity.id);
-				entity.isMoving = 'no';
-				return;
-			}
-
-			// compare with game borders
-			if (entity.sprite.x < 1 || entity.sprite.x > (Config.game.cellSize * Config.game.cells) || entity.sprite.y < 1 || entity.sprite.y > (Config.game.cellSize * Config.game.rows)) {
-				this.field.delete(entity.id);
-				console.log("hit border", otherEntity.id);
-				entity.isMoving = 'no';
-				return;
-			}
-		}
-	}
-
 	// move entity closer to wanted pos using its speed
 	moveEntity(entity, delta) {
 		// where entity is and where it must
@@ -139,12 +111,18 @@ export class Game {
 
 		// if destination is reached stop movement
 		if (isAt[1] === mustBeAt[1] && isAt[0] === mustBeAt[0]) {
-			entity.isMoving = 'no';
+			if (entity instanceof Missile) {
+				entity.isMoving = false;
+				entity.move(entity.facing);
+			} else {
+				entity.isMoving = false;
+			}
 			return;
 		}
 
 		// where the entity should move
 		let nextAt = [isAt[0], isAt[1]];
+
 		// different calculation for each direction
 		switch (entity.facing) {
 			case 'north':

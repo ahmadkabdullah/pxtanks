@@ -82,27 +82,26 @@ export class Movable extends Entity {
 		super();
 		// movement
 		this.speed = 1;
-		this.isMoving = 'no';
+		this.isMoving = false;
 		// store destination in cell and pixel
 		this.moveToCell = [];
 	}
 
-	move(absoluteDirection, numOfCells = 1) {
+	move(absoluteDirection) {
 		// if already moving, don't move
 		// otherwise move
-		if (this.isMoving !== 'no') return;
-		else if (this instanceof Missile) this.isMoving = 'moving';
-		else this.isMoving = 'preparing';
+		if (this.isMoving == true) return;
+		else this.isMoving = true;
 
 		// set default values
 		this.moveToCell = [this.positionCell[0], this.positionCell[1]];
 
 		// set where to move
 		switch (absoluteDirection) {
-			case "west": this.moveToCell[0] -= numOfCells; break;
-			case "east": this.moveToCell[0] += numOfCells; break;
-			case "north": this.moveToCell[1] -= numOfCells; break;
-			case "south": this.moveToCell[1] += numOfCells; break;
+			case "west": this.moveToCell[0] -= 1; break;
+			case "east": this.moveToCell[0] += 1; break;
+			case "north": this.moveToCell[1] -= 1; break;
+			case "south": this.moveToCell[1] += 1; break;
 		}
 
 		// set to face direction to move in 
@@ -157,7 +156,7 @@ export class Tank extends Movable {
 		);
 
 		// shoot to where tank is facing
-		missile.move(this.facing, Config.game.cells * 2);
+		missile.move(this.facing);
 
 		// increase shot count of tank
 		this.stats.shots += 1;
@@ -178,6 +177,7 @@ export class Missile extends Movable {
 		this.damage = damage;
 		// who fired the missile
 		this.tank = tankThatFired;
+		this.isDamagable = false;
 	}
 
 	hasHit(hitEntity) {
