@@ -7,17 +7,18 @@ export const Config = {
 
 	textures: {
 		tanks: {
-			normal: 'assets/tank.png',
-			destroyed: 'assets/tankdest.png',
+			normal: 'tank.png',
+			destroyed: 'tankdest.png',
 		},
 
 		missiles: {
-			normal: 'assets/missile.png',
+			normal: 'missile.png',
+			destroyed: '',
 		},
 
 		walls: {
-			normal: 'assets/wall.png',
-			destroyed: 'assets/walldest.png',
+			normal: 'wall.png',
+			destroyed: 'walldest.png',
 		},
 	},
 

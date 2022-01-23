@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { Tank, Wall } from './entity.js';
-import { Game } from './game.js';
+import { Tank, Wall } from './entity';
+import { Game } from './game';
 
 let g = new Game();
 
@@ -8,11 +7,11 @@ g.addEntity(new Wall(), 3, 4);
 g.addEntity(new Wall(), 4, 4);
 g.addEntity(new Wall(), 5, 4);
 
-let bony1 = g.addEntity(new Tank(), 2, 8);
-let bony3 = g.addEntity(new Tank(), 4, 8);
-let bony4 = g.addEntity(new Tank(), 5, 8);
-let bony8 = g.addEntity(new Tank(), 9, 8);
-let bony9 = g.addEntity(new Tank(), 10, 8);
+g.addEntity(new Tank(), 2, 8);
+const bony3 = g.addEntity(new Tank(), 4, 8);
+g.addEntity(new Tank(), 5, 8);
+const bony8 = g.addEntity(new Tank(), 9, 8);
+g.addEntity(new Tank(), 10, 8);
 
 // listeners for p1
 window.addEventListener('keypress', (e) => {
@@ -41,7 +40,7 @@ window.addEventListener('keydown', (e) => {
 })
 
 
-g.loop((delta) => {
+g.runner.ticker.add((delta) => {
 
 	// handle movement
 	g.updateMoves(delta);

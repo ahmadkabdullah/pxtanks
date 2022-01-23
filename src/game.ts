@@ -1,24 +1,25 @@
-import { Config } from './CONFIG.js';
-import { Missile } from './entity.js';
-import { Utils } from './utils.js';
-
-// eslint-disable-next-line no-undef
-export const Pixi = PIXI;
+import { Application as PApplication, Sprite as PSprite, Container as PContainer } from 'pixi.js'
+import { Config } from './config';
+import { Entity, Missile, Movable } from './entity';
+import { Utils } from './utils';
 
 export class Game {
+	runner: PApplication;
+	container: PContainer;
+	field: Map<number, any>;
+
 	constructor() {
 		// runner is a pixi app
-		this.runner = new Pixi.Application({
+		this.runner = new PApplication({
+			view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
 			width: Config.game.cells * Config.game.cellSize,
 			height: Config.game.rows * Config.game.cellSize,
+			backgroundColor: 0x6495ed,
 			resolution: window.devicePixelRatio || 1,
 		});
 
-		// add game unto html file
-		document.body.appendChild(this.runner.view);
-
 		// container for all entites in the pixi app
-		this.container = new Pixi.Container;
+		this.container = new PContainer;
 		this.runner.stage.addChild(this.container);
 		// make zIndex usable
 		this.container.sortableChildren = true;
@@ -28,14 +29,10 @@ export class Game {
 		this.field = new Map();
 	}
 
-	loop(funcWithDelta) {
-		this.runner.ticker.add(funcWithDelta);
-	}
-
 	// add an object to field
-	addEntity(entity, cell = 1, row = 1) {
+	addEntity(entity: Entity, cell = 1, row = 1) {
 		// make sprite from texture and set on entity
-		entity.setSprite(new Pixi.Sprite.from(entity.currentTexture));
+		entity.setSprite(PSprite.from(entity.currentTexture));
 
 		// render the sprite
 		this.container.addChild(entity.sprite)
@@ -58,7 +55,7 @@ export class Game {
 	}
 
 	// a function to be run for handling all movement
-	updateMoves(delta) {
+	updateMoves(delta: any) {
 		for (let [, entity] of this.field.entries()) {
 			// if it isn't moving, don't touch it
 			if (entity.isMoving !== true) continue;
@@ -79,7 +76,7 @@ export class Game {
 	}
 
 	// detect collision of moving objects
-	detectCollision(entity) {
+	detectCollision(entity: Movable) {
 		// go through all entitites on field
 		for (let [, otherEntity] of this.field.entries()) {
 			// skip comparison to the entity itself
@@ -110,7 +107,7 @@ export class Game {
 
 				// when entity is a missile (on missile hit)
 				if (entity instanceof Missile) {
-					entity.hasHit('border');
+					entity.hasHitBorder();
 					this.field.delete(entity.id);
 				}
 
@@ -122,10 +119,10 @@ export class Game {
 	}
 
 	// move entity closer to wanted pos using its speed
-	moveEntity(entity, delta) {
+	moveEntity(entity: Movable, delta: any) {
 		// where entity is and where it must
 		const isAt = [entity.sprite.x, entity.sprite.y];
-		const mustBeAt = entity.sprite.moveTo;
+		const mustBeAt = Utils.cellToPos(entity.moveToCell);
 
 		// if destination is reached stop movement
 		if (isAt[1] === mustBeAt[1] && isAt[0] === mustBeAt[0]) {

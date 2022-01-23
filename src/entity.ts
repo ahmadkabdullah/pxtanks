@@ -1,15 +1,26 @@
-import { Config } from "./CONFIG.js";
-import { Utils } from "./utils.js";
-import { Pixi } from "./game.js";
+import { Texture as PTexture, Sprite as PSprite } from "pixi.js";
 
-class Entity {
-	constructor() {
+import { Config } from "./config";
+import { Utils } from "./utils";
+
+export class Entity {
+	id: number;
+	sprite: PSprite;
+	positionCell: number[];
+	facing: string;
+	isDamagable: boolean;
+	isDestroyed: boolean;
+	health: number;
+	textures!: { normal: any; destroyed: any; };
+	currentTexture: any;
+
+	constructor(id: number = 0) {
 		// the unique id of the entity
-		this.id = 0;
+		this.id = id;
 
 		// stores pixi sprite
 		// also pixel position and size
-		this.sprite = {};
+		this.sprite = new PSprite;
 
 		// position and direction
 		this.positionCell = [1, 1];
@@ -21,7 +32,7 @@ class Entity {
 		this.health = 1;
 	}
 
-	setTextures(normalTexture, destroyedTexture) {
+	setTextures(normalTexture: string, destroyedTexture: string) {
 		// set textures for entity from config
 		this.textures = {
 			normal: normalTexture,
@@ -32,14 +43,14 @@ class Entity {
 		this.currentTexture = this.textures.normal;
 	}
 
-	setSprite(spriteToAdd) {
+	setSprite(spriteToAdd: PSprite) {
 		// set sprite on entity
 		this.sprite = spriteToAdd;
 		this.sprite.anchor.set(0.5);
 	}
 
 	// take damage and when 0, change to destroyed
-	takeDamage(damageAmount) {
+	takeDamage(damageAmount: number) {
 		this.health -= damageAmount;
 
 		// if entity is destroyed
@@ -49,19 +60,19 @@ class Entity {
 			this.sprite.zIndex = -9;
 
 			// ! temporary: set new texture
-			this.sprite.texture = new Pixi.Texture.from(this.currentTexture);
+			this.sprite.texture = PTexture.from(this.currentTexture);
 		}
 	}
 
 	// make setting the entity properties transfer to sprite
 
-	setCellPosition(x, y) {
+	setCellPosition(x: number, y: number) {
 		this.positionCell = [x, y]
-		this.sprite.x = Utils.cellToPos(x, y)[0];
-		this.sprite.y = Utils.cellToPos(x, y)[1];
+		this.sprite.x = Utils.cellToPos([x, y])[0];
+		this.sprite.y = Utils.cellToPos([x, y])[1];
 	}
 
-	setFacing(absoluteDirection) {
+	setFacing(absoluteDirection: string) {
 		this.facing = absoluteDirection;
 		switch (absoluteDirection) {
 			case 'east':
@@ -83,6 +94,10 @@ class Entity {
 // all movable entities
 
 export class Movable extends Entity {
+	speed: number;
+	isMoving: boolean;
+	moveToCell: number[];
+
 	constructor() {
 		super();
 		// movement
@@ -92,7 +107,7 @@ export class Movable extends Entity {
 		this.moveToCell = [];
 	}
 
-	move(absoluteDirection) {
+	move(absoluteDirection: string) {
 		// don't move if tank is destroyed
 		if (this.isDestroyed) return;
 
@@ -114,13 +129,15 @@ export class Movable extends Entity {
 
 		// set to face direction to move in 
 		this.setFacing(absoluteDirection);
-
-		// convert to pixel
-		this.sprite.moveTo = Utils.cellToPos(...this.moveToCell)
 	}
 }
 
 export class Tank extends Movable {
+	stats: { shots: number; hits: number; };
+	missileDamage: number;
+	missileSpeed: number;
+	shootingRate: number;
+	isFiring: boolean;
 	constructor() {
 		super();
 
@@ -146,7 +163,7 @@ export class Tank extends Movable {
 		this.isFiring = false;
 	}
 
-	shootMissile(game) {
+	shootMissile(game: { addEntity: (arg0: Missile, arg1: number, arg2: number) => any; }) {
 		// if already firing, don't move, else, fire
 		if (this.isFiring) return;
 		else this.isFiring = true;
@@ -172,7 +189,9 @@ export class Tank extends Movable {
 }
 
 export class Missile extends Movable {
-	constructor(tankThatFired, speed, damage) {
+	damage: any;
+	tank: any;
+	constructor(tankThatFired: Tank, speed: number, damage: number) {
 		super();
 
 		// textures
@@ -186,12 +205,14 @@ export class Missile extends Movable {
 		this.isDamagable = false;
 	}
 
-	hasHit(hitEntity) {
+	hasHitBorder() {
 		// destroy missile on impact
 		this.sprite.destroy();
+	}
 
-		// do nothing else if hit the border
-		if (hitEntity === 'border') return;
+	hasHit(hitEntity: Entity) {
+		// destroy missile on impact
+		this.sprite.destroy();
 
 		// damage entity
 		hitEntity.takeDamage(this.damage);
