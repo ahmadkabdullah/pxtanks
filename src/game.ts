@@ -14,7 +14,7 @@ export class Game {
 			view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
 			width: Config.game.cells * Config.game.cellSize,
 			height: Config.game.rows * Config.game.cellSize,
-			backgroundColor: 0x6495ed,
+			backgroundColor: Config.game.backgroundColor,
 			resolution: window.devicePixelRatio || 1,
 		});
 

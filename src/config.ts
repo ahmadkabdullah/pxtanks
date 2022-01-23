@@ -1,5 +1,6 @@
 export const Config = {
 	game: {
+		backgroundColor: 0x505050,
 		cells: 14,
 		rows: 14,
 		cellSize: 50,
